@@ -131,4 +131,56 @@ $(document).ready(function () {
       },
     });
   });
+  // load table of contents
+  function loadtable() {
+    $.ajax({
+      url: "content/load_data.php",
+      type: "post",
+      success: function(data) {
+        $(".table").html(data);
+        // Initialize DataTable only after the table content is loaded
+      },
+      error: function() {
+        alert("Failed to load table data.");
+      }
+    });
+  }
+
+  // Call loadtable on document ready
+  loadtable();
+ 
+      
+  // spending form submit
+  $(document).on("click", "#add", function (e) {
+    e.preventDefault();
+    console.log("Spending");
+    var purpose = $('#purpose').val();
+    var amount = $('#amount').val();
+    var date = $('#mydate').val();
+
+    if (!purpose || !amount || !date) {
+        alert("All fields are required");
+        return;
+    }
+
+    console.log(purpose, amount, date);
+
+    $.ajax({
+        url: "content/_spendinghandle.php",
+        type: "post",
+        data: {purpose: purpose, amount: amount, date: date},
+        success: function (response,data) {
+          console.log(response,data);
+            if (response.status === "success") {
+                window.location.href = "home.php";
+            } else if (response.status === "error") {
+                alert(response.errors.join("\n"));
+            }
+        },
+        error: function () {
+            alert("Sorry for the technical issue!");
+        }
+    });
+});
+
 });

@@ -35,5 +35,3 @@
     new SimpleLightbox({
         elements: '#portfolio a.portfolio-box'
     });
-
-});

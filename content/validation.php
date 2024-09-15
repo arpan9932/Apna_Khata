@@ -24,6 +24,24 @@ public function isEmail ($field, $value){
             $this->errors[] ="$field1 must contain only alphabetic characters";
         }
     }
+    public function isNumeric($field, $value) {
+        if (!is_numeric($value)) {
+            $this->errors[] = "$field must be a numeric value";
+        }
+    }
+    public function isDate($field, $value) {
+        $format = 'Y-m-d'; // Define the expected date format
+        $date = DateTime::createFromFormat($format, $value);
+        if (!$date || $date->format($format) !== $value) {
+            $this->errors[] = "$field must be a valid date (YYYY-MM-DD)";
+        }
+    }
+    public function isAlphanumeric($field, $value) {
+        if (!ctype_alnum(str_replace(' ', '', $value))) {
+            $this->errors[] = "$field must contain only alphanumeric characters";
+        }
+    }
+            
     public function getErrors() {
         return $this->errors;
     }
