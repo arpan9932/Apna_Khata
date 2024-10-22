@@ -34,15 +34,17 @@
                         include '_dbconnect.php';
                         session_start();
                         $user_id=$_SESSION['user_id'];
-                        $sql="SELECT * FROM `manual_money` WHERE user_id=$user_id";
+                        $sql="SELECT * FROM `manual_money` WHERE user_id=$user_id AND `soft_delete` = '0'";
                         $result=mysqli_query($conn,$sql);
                         while($row=mysqli_fetch_assoc($result)){
                         echo'
-                        <tr>
-                            <td style="color: black;">'.$row["source"].'</td>
-                            <td style="color: black;">'.$row["amount"].'</td>
-                            <td style="color: black;"><i class="bi bi-pencil-square"></i></td>
-                            <td style="color: black;"><i class="bi bi-trash3-fill"></i></td>
+                           <tr>
+                             <td class="source" data-id="' . $row["id"] . '" style="color: black;">' . $row["source"] . '</td>
+                             <td class="amount" data-id="' . $row["id"] . '" style="color: black;">' . $row["amount"] . '</td>
+                            <td style="color: black;" ><a class="manual_edit_btn" data-id="' .
+                                $row["id"] . '"><i class="bi bi-pencil-square"></i></a></td>
+                            <td style="color: black;"><a class="manual_dlt_btn"  data-id="' .
+                                $row["id"] . '"><i class="bi bi-trash3-fill"></i></a></td>
                         </tr>';
                         }
                         ?>

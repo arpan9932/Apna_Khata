@@ -9,7 +9,7 @@ class ManualHandle extends Validation {
         $this->conn = $conn;
     }
 
-    public function add_monthly($user_id, $source, $amount) {
+    public function add_monthly($user_id, $source, $amount,$month,$year) {
         // Validation
         $this->isRequired('User ID', $user_id);
         $this->isNumeric('Amount', $amount);
@@ -53,7 +53,11 @@ class ManualHandle extends Validation {
                     throw new Exception('Failed to insert balance.');
                 }
             }
-
+            $monthlybalanceQuery = "UPDATE `monthly_balance` SET `balance` = `balance`+'$amount'  WHERE `user_id`='$user_id' AND `month`='$month' AND `year` = '$year'";
+            if (!mysqli_query($this->conn,  $monthlybalanceQuery)) {
+                $error = mysqli_error($this->conn);  // Get the actual error message
+                    return ['status' => 'error', 'message' => 'Failed to update balance.', 'error' => $error];
+            }
             // Commit transaction
             mysqli_commit($this->conn);
             return ['status' => 'success', 'message' => 'Manual entry added and balance updated successfully'];
@@ -69,14 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     session_start();
     if (isset($_SESSION['user_id'])) {
         $user_id = $_SESSION['user_id'];
+        $month_num = date('n'); 
+        $year = date('Y'); 
         $manualHandle = new ManualHandle($conn);
-        $result = $manualHandle->add_monthly($user_id, $_POST['source'], $_POST['amount']);
+        $result = $manualHandle->add_monthly($user_id, $_POST['source'], $_POST['amount'],$month_num,$year);
 
         // Send JSON response
         header('Content-Type: application/json');
         echo json_encode($result);
     } else {
-        echo json_encode(['status' => 'error', 'errors' => 'User not logged in']);
+        echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
     }
 }
 ?>

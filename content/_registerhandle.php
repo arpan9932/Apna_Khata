@@ -1,11 +1,14 @@
 <?php
-include '_dbconnect.php';
-include 'validation.php';
+include_once '_dbconnect.php';
+include_once 'validation.php';
+include_once 'Auth.php';
+
 class Register extends Validation {
     protected $conn;
     public function __construct($conn){
         $this->conn = $conn;
     }
+    
     public function register_user($name, $email, $password1, $password2){
         $this->isRequired('Name', $name);
         $this->isAlphabetic('Name', $name);  
@@ -31,9 +34,10 @@ class Register extends Validation {
         $query = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$hashed_password')";
         if(mysqli_query($this->conn,$query)){
             $user_id=mysqli_insert_id($this->conn);
-            session_start();
-            $_SESSION['user_id']=$user_id;
-            $_SESSION['name']=$name;// Store the token in the database
+            $query1="INSERT INTO `user_balance` (`user_id`, `balance`) VALUES ('$user_id', '0')";
+            mysqli_query($this->conn,$query1);
+            $auth = new Auth();
+            $auth->login($user_id,$name);
             
             $token = bin2hex(random_bytes(16)); // Generate a secure token
             $hashedToken = password_hash($token, PASSWORD_DEFAULT); // Hash the token for storage

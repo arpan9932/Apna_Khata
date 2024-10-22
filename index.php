@@ -1,4 +1,8 @@
-
+    <?php  
+    include_once 'content/Auth.php';
+    $auth=new Auth();
+    $auth->redirectIfLoggedIn();
+    ?>
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -17,7 +21,7 @@
 
     </head>
     <body>
-            <?php include "content/header.php"; 
+            <?php include_once "content/header.php"; 
             ?>
 
           <!-- Masthead-->

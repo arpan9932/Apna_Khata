@@ -36,6 +36,15 @@ public function isEmail ($field, $value){
             $this->errors[] = "$field must be a valid date (YYYY-MM-DD)";
         }
     }
+
+    public function isYear($field, $value) {
+        // Check if the value is a four-digit year
+        if (!preg_match('/^\d{4}$/', $value)) {
+            $this->errors[] = "$field must be a valid year (YYYY)";
+            return false;
+        }
+    }
+    
     public function isAlphanumeric($field, $value) {
         if (!ctype_alnum(str_replace(' ', '', $value))) {
             $this->errors[] = "$field must contain only alphanumeric characters";

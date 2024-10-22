@@ -30,6 +30,8 @@ class MonthlyHandle extends Validation {
 
         // Calculate the next add date based on the provided date
         $next_add_date = date('Y-m-d', strtotime('+1 month', strtotime($current_date)));
+        $month = date('m', strtotime($current_date)); 
+        $year = date('Y', strtotime($current_date)); 
 
         // Start transaction
         mysqli_begin_transaction($this->conn);
@@ -47,7 +49,7 @@ class MonthlyHandle extends Validation {
             // Check if the user already has a record in the `user_balance` table
             $balanceQuery = "SELECT * FROM `user_balance` WHERE `user_id` = '$user_id'";
             $balanceResult = mysqli_query($this->conn, $balanceQuery);
-
+          
             if (mysqli_num_rows($balanceResult) > 0) {
                 $row=mysqli_fetch_assoc($balanceResult);
                 $oldbalance=$row['balance'];
@@ -56,6 +58,19 @@ class MonthlyHandle extends Validation {
                 if (!mysqli_query($this->conn, $updateBalanceQuery)) {
                     throw new Exception('Failed to update balance.');
                 }
+                $check_month_balance="SELECT * FROM `monthly_balance` WHERE `user_id`='$user_id' AND `month`='$month' AND `year` = '$year' ";
+                $res1=mysqli_query($this->conn,$check_month_balance);
+                if(mysqli_fetch_row($res1)){
+                $updateMonthlyQuery="UPDATE `monthly_balance` SET `balance` = `balance`+'$amount'  WHERE `user_id`='$user_id' AND `month`='$month' AND `year` = '$year' ";
+                if (!mysqli_query($this->conn, $updateMonthlyQuery)) {
+                    throw new Exception('Failed to update monthly balance.');
+                }
+            }else{
+                $insertMonthlyQuery="INSERT INTO `monthly_balance` (`user_id`, `month`, `year`, `balance`) VALUES ('$user_id', '$month', '$year', '$amount') ";
+                if (!mysqli_query($this->conn, $insertMonthlyQuery)) {
+                    throw new Exception('Failed to add monthly balance.');
+                }
+            }
             } else {
                 // Insert a new record in `user_balance`
                 $insertBalanceQuery = "INSERT INTO `user_balance` (`user_id`, `balance`) VALUES ('$user_id', '$amount')";

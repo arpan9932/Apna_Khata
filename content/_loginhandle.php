@@ -1,7 +1,7 @@
 <?php
-session_start();  // Start the session
 require_once '_dbconnect.php';  // Include the database connection
-require_once 'Validation.php';     // Include the validation class
+require_once 'Validation.php';
+require_once 'Auth.php';     // Include the validation class
 
 class Login extends Validation {
     private $conn;
@@ -32,9 +32,8 @@ class Login extends Validation {
             $user = mysqli_fetch_assoc($result);
             // Verify the password
             if (password_verify($password, $user['password'])) {
-                // Set session after successful login
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['name'] = $user['name'];
+                $auth = new Auth();
+                $auth->login($user['id'],$user['name']);
 
             $token = bin2hex(random_bytes(16)); // Generate a secure token
             $hashedToken = password_hash($token, PASSWORD_DEFAULT); // Hash the token for storage
