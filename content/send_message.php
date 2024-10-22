@@ -19,14 +19,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->isSMTP();                                          
         $mail->Host       = 'smtp.gmail.com';                      
         $mail->SMTPAuth   = true;                                 
-        $mail->Username   = 'arpan79dream@gmail.com';              
-        $mail->Password   = 'fjhd jzsl luzw rpwe';                 
+        $mail->Username   = '';//add your email              
+        $mail->Password   = '';    //add your password here             
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;     
         $mail->Port       = 587;    
 
         $app_name="Apna Khata";
         $mail->setFrom($email, $app_name);  
-        $mail->addAddress('arpanbera7407@gmail.com');   
+        $mail->addAddress('');   //add the email address which account you want to send
         $mail->isHTML(true);       
         $mail->Subject = $subject; 
         $mail->Body    = "A new comment from <strong>$name</strong><br>
